@@ -1,0 +1,393 @@
+{
+  "champion": "gbt_prior",
+  "numeric": [
+    "m_1h",
+    "m_15m",
+    "src_1h",
+    "lang_1h",
+    "nonen_1h",
+    "art_1h",
+    "tone_mean_1h",
+    "tone_std_1h",
+    "conf_mean_1h",
+    "doclen_mean_1h",
+    "goldstein",
+    "avg_tone",
+    "quad_class",
+    "is_root_event",
+    "geo_type",
+    "has_actor1_country",
+    "has_actor2_country",
+    "has_geo",
+    "num_mentions_export",
+    "num_sources_export",
+    "n_themes_1h",
+    "pub_prior_mean",
+    "pub_prior_max",
+    "pub_known_frac"
+  ],
+  "categorical": [
+    "cameo_root",
+    "geo_country",
+    "actor1_country"
+  ],
+  "themes_col": "themes_1h",
+  "vocab": {
+    "cameo_root": [
+      "04",
+      "01",
+      "05",
+      "02",
+      "11",
+      "03",
+      "19",
+      "17",
+      "07",
+      "08",
+      "12",
+      "06",
+      "09",
+      "13",
+      "18",
+      "10",
+      "14",
+      "16",
+      "15",
+      "20"
+    ],
+    "geo_country": [
+      "US",
+      "IN",
+      "UK",
+      "RS",
+      "NI",
+      "IS",
+      "CA",
+      "UP",
+      "AS",
+      "NA",
+      "CH",
+      "IR",
+      "FR",
+      "PK",
+      "SA",
+      "SF",
+      "EI",
+      "RP",
+      "GM",
+      "TU",
+      "NO",
+      "JA",
+      "KE",
+      "MX",
+      "GH",
+      "IT",
+      "KS",
+      "ID",
+      "NZ",
+      "EG",
+      "SP",
+      "UG",
+      "BG",
+      "BR",
+      "MY",
+      "YM",
+      "QA",
+      "SU",
+      "VM",
+      "AJ"
+    ],
+    "actor1_country": [
+      "NA",
+      "USA",
+      "GBR",
+      "RUS",
+      "UKR",
+      "ISR",
+      "CAN",
+      "CHN",
+      "NGA",
+      "AUS",
+      "IND",
+      "IRN",
+      "FRA",
+      "EUR",
+      "PAK",
+      "AFR",
+      "SAU",
+      "TUR",
+      "DEU",
+      "IRL",
+      "NOR",
+      "PSE",
+      "JPN",
+      "EGY",
+      "PHL",
+      "KOR",
+      "ITA",
+      "QAT",
+      "ESP",
+      "IDN",
+      "MEX",
+      "KEN",
+      "NZL",
+      "POL",
+      "GHA",
+      "UGA",
+      "MYS",
+      "BRA",
+      "YEM",
+      "ZAF"
+    ]
+  },
+  "threshold": 0.7555309710948727,
+  "pos_threshold": 3,
+  "results": {
+    "baseline_src_1h": {
+      "val": {
+        "pr_auc": 0.43113954551252737,
+        "roc_auc": 0.7691881145473065,
+        "precision": 0.45760053769463427,
+        "recall": 0.5701325889741801,
+        "f1": 0.5077056922694506,
+        "precision_at_top1pct": 0.8898377455166524,
+        "precision_at_top5pct": 0.5466803208738693
+      },
+      "test": {
+        "pr_auc": 0.473647850266946,
+        "roc_auc": 0.7915177889971008,
+        "precision": 0.4391861204469071,
+        "recall": 0.6141242220246412,
+        "f1": 0.5121279525473996,
+        "precision_at_top1pct": 0.9395248380129589,
+        "precision_at_top5pct": 0.5550755939524838
+      },
+      "threshold": 2.0
+    },
+    "lr_base": {
+      "val": {
+        "pr_auc": 0.4281357863799385,
+        "roc_auc": 0.8127500153421583,
+        "precision": 0.5289952798381659,
+        "recall": 0.4379623168178646,
+        "f1": 0.4791937084828587,
+        "precision_at_top1pct": 0.748932536293766,
+        "precision_at_top5pct": 0.5313193377709506
+      },
+      "test": {
+        "pr_auc": 0.5060597083047031,
+        "roc_auc": 0.833779473498811,
+        "precision": 0.557907113462669,
+        "recall": 0.482154197891528,
+        "f1": 0.5172719220549158,
+        "precision_at_top1pct": 0.9157667386609071,
+        "precision_at_top5pct": 0.5496040316774659
+      },
+      "threshold": 0.4985567609155246,
+      "run_id": "a982f26eb70846f0a499a313c3380696",
+      "use_prior": false,
+      "use_themes": false
+    },
+    "lr_prior": {
+      "val": {
+        "pr_auc": 0.4623898404164137,
+        "roc_auc": 0.8515747904149553,
+        "precision": 0.5223051553549731,
+        "recall": 0.41995812979762737,
+        "f1": 0.4655732631904688,
+        "precision_at_top1pct": 0.8488471391972673,
+        "precision_at_top5pct": 0.5164703874381293
+      },
+      "test": {
+        "pr_auc": 0.537410851535417,
+        "roc_auc": 0.8698038653946598,
+        "precision": 0.58573236317621,
+        "recall": 0.4703416740759558,
+        "f1": 0.5217330045790771,
+        "precision_at_top1pct": 0.9301655867530597,
+        "precision_at_top5pct": 0.5524838012958964
+      },
+      "threshold": 0.7083640109425108,
+      "run_id": "314267fb7df7420d9efc8ab62c10f07b",
+      "use_prior": true,
+      "use_themes": false
+    },
+    "gbt_base": {
+      "val": {
+        "pr_auc": 0.5184700497729791,
+        "roc_auc": 0.8466344885984868,
+        "precision": 0.573260386390836,
+        "recall": 0.46796929518492675,
+        "f1": 0.5152912248347933,
+        "precision_at_top1pct": 0.9052092228864219,
+        "precision_at_top5pct": 0.572452636968766
+      },
+      "test": {
+        "pr_auc": 0.5526647437236801,
+        "roc_auc": 0.8643065850022624,
+        "precision": 0.5559192580469177,
+        "recall": 0.5177187857233583,
+        "f1": 0.5361394278197962,
+        "precision_at_top1pct": 0.9438444924406048,
+        "precision_at_top5pct": 0.5755219582433405
+      },
+      "threshold": 0.6819620166402411,
+      "run_id": "6d263ce9fba44848a3d090aa6cd3dad0",
+      "use_prior": false,
+      "use_themes": false
+    },
+    "gbt_prior": {
+      "val": {
+        "pr_auc": 0.5502550618202203,
+        "roc_auc": 0.8736052658904486,
+        "precision": 0.6150325646893152,
+        "recall": 0.4876482903000698,
+        "f1": 0.5439825626654212,
+        "precision_at_top1pct": 0.9308283518360376,
+        "precision_at_top5pct": 0.6036866359447005
+      },
+      "test": {
+        "pr_auc": 0.5846910585281607,
+        "roc_auc": 0.8897953075166722,
+        "precision": 0.6173628660621376,
+        "recall": 0.5274990473771116,
+        "f1": 0.568904109589041,
+        "precision_at_top1pct": 0.9402447804175667,
+        "precision_at_top5pct": 0.6066234701223903
+      },
+      "threshold": 0.7555309710948727,
+      "run_id": "ae81a9150fef427c85c272adde4a7fc0",
+      "use_prior": true,
+      "use_themes": false
+    },
+    "gbt_prior_themes": {
+      "val": {
+        "pr_auc": 0.5450137275672662,
+        "roc_auc": 0.8762808539428815,
+        "precision": 0.6202664796633941,
+        "recall": 0.49378925331472434,
+        "f1": 0.549848473074831,
+        "precision_at_top1pct": 0.8958155422715628,
+        "precision_at_top5pct": 0.6089776412357057
+      },
+      "test": {
+        "pr_auc": 0.5863711543318484,
+        "roc_auc": 0.8902499026778027,
+        "precision": 0.607483492296405,
+        "recall": 0.5258478343706338,
+        "f1": 0.5637254901960783,
+        "precision_at_top1pct": 0.9402447804175667,
+        "precision_at_top5pct": 0.6008639308855291
+      },
+      "threshold": 0.7462579453286144,
+      "run_id": "6e7bc69e400f431e82ac6d04c23756ed",
+      "use_prior": true,
+      "use_themes": true
+    }
+  },
+  "top_features": [
+    [
+      "src_1h",
+      0.2694929918249642
+    ],
+    [
+      "geo_country_ix",
+      0.16202796632753397
+    ],
+    [
+      "actor1_country_ix",
+      0.09796108747605979
+    ],
+    [
+      "pub_prior_max",
+      0.08408265475564022
+    ],
+    [
+      "m_1h",
+      0.0653848135142098
+    ],
+    [
+      "pub_prior_mean",
+      0.05148411931480213
+    ],
+    [
+      "cameo_root_ix",
+      0.03836005502052151
+    ],
+    [
+      "doclen_mean_1h",
+      0.0359700207279849
+    ],
+    [
+      "geo_type",
+      0.035895080217317514
+    ],
+    [
+      "n_themes_1h",
+      0.027130136461859355
+    ],
+    [
+      "has_actor2_country",
+      0.01793480780464806
+    ],
+    [
+      "tone_mean_1h",
+      0.017309858657447635
+    ],
+    [
+      "avg_tone",
+      0.015195365061918046
+    ],
+    [
+      "goldstein",
+      0.014459966738038097
+    ],
+    [
+      "pub_known_frac",
+      0.01325701019238463
+    ],
+    [
+      "art_1h",
+      0.012777963667555046
+    ],
+    [
+      "conf_mean_1h",
+      0.011025284588070573
+    ],
+    [
+      "tone_std_1h",
+      0.010492940327776996
+    ],
+    [
+      "num_mentions_export",
+      0.009191950541296364
+    ],
+    [
+      "num_sources_export",
+      0.00433205050391704
+    ],
+    [
+      "is_root_event",
+      0.003030885008727312
+    ],
+    [
+      "m_15m",
+      0.002849885637184807
+    ],
+    [
+      "quad_class",
+      0.00028434516246642115
+    ],
+    [
+      "has_geo",
+      6.875856365124111e-05
+    ],
+    [
+      "has_actor1_country",
+      1.9040244504821036e-09
+    ]
+  ],
+  "pos_weight": 8.0,
+  "train_rows": 373358,
+  "train_pos_rate": 0.06563405632127878
+}

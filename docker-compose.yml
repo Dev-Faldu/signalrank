@@ -1,0 +1,67 @@
+# SignalRank stack:  docker compose up -d kafka mlflow api dashboard
+# Streaming demo:    docker compose --profile stream up -d scorer replay
+x-app: &app
+  build: {context: ., dockerfile: docker/Dockerfile}
+  volumes: ["./data:/app/data", "./models:/app/models", "./mlflow.db:/app/mlflow.db"]
+  environment: &env
+    SIGNALRANK_ROOT: /app
+    KAFKA_BOOTSTRAP: kafka:29092
+    SIGNALRANK_API: http://api:8000
+
+services:
+  kafka:                       # single-node Kafka in KRaft mode (no ZooKeeper)
+    image: confluentinc/cp-kafka:7.8.0
+    ports: ["9092:9092"]
+    environment:
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,EXTERNAL://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_MESSAGE_MAX_BYTES: 5242880
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:29092", "--list"]
+      interval: 10s
+      retries: 12
+
+  kafka-init:                  # creates the topic once the broker is healthy
+    image: confluentinc/cp-kafka:7.8.0
+    depends_on: {kafka: {condition: service_healthy}}
+    command: kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic gdelt.records --partitions 1 --replication-factor 1
+    restart: "no"
+
+  mlflow:                      # experiment tracking + model registry UI
+    <<: *app
+    command: mlflow server --backend-store-uri sqlite:////app/mlflow.db --host 0.0.0.0 --port 5000
+    ports: ["5000:5000"]
+
+  api:                         # FastAPI model service
+    <<: *app
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    ports: ["8000:8000"]
+
+  dashboard:                   # Streamlit UI
+    <<: *app
+    command: streamlit run app/dashboard.py --server.port 8501 --server.address 0.0.0.0
+    ports: ["8501:8501"]
+    depends_on: [api]
+
+  scorer:                      # Spark Structured Streaming job
+    <<: *app
+    profiles: [stream]
+    command: python streaming/stream_scorer.py
+    depends_on: {kafka-init: {condition: service_completed_successfully}}
+
+  replay:                      # replays held-out GDELT intervals into Kafka
+    <<: *app
+    profiles: [stream]
+    command: python streaming/producer.py replay --start 20261025120000 --end 20261025180000 --interval-sec 3
+    depends_on: {kafka-init: {condition: service_completed_successfully}}

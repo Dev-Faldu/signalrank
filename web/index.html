@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SignalRank Dashboard</title>
+<meta name="description" content="SignalRank ranks fresh GDELT news events by whether they will keep spreading across new publishers. Real Spark GBT model, scored in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235b5bf0'/%3E%3Cpath d='M7 20c3 0 3-8 6-8s3 8 6 8 3-8 6-8' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div>
+
+<header class="top glass">
+  <a class="brand" href="#ranked" aria-label="SignalRank home">
+    <span class="logo"><svg viewBox="0 0 32 32" width="22" height="22"><path d="M5 20c3 0 3-9 6-9s3 9 6 9 3-9 6-9 2 5 4 5" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span><b>SignalRank</b><small>what matters, one hour in</small></span>
+  </a>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" data-tab="ranked" class="on">Ranked</button>
+    <button role="tab" data-tab="map">Map</button>
+    <button role="tab" data-tab="trends">Trends</button>
+    <button role="tab" data-tab="model">Model</button>
+    <button role="tab" data-tab="try">Try an event</button>
+  </nav>
+  <div class="asof" id="asof"><span class="dot"></span><span id="asofText">Loading…</span></div>
+</header>
+
+<main>
+  <section class="kpis" id="kpis"></section>
+
+  <section class="view on" id="v-ranked">
+    <div class="glass toolbar">
+      <label class="field grow"><span>Search</span><input id="q" type="search" placeholder="Headline, publisher or place"></label>
+      <label class="field"><span>Event type</span><select id="fType"></select></label>
+      <label class="field"><span>Country</span><select id="fCountry"></select></label>
+      <label class="field range"><span>Min score <b id="minScoreV">0.00</b></span><input id="minScore" type="range" min="0" max="0.95" step="0.05" value="0"></label>
+      <label class="switch"><input id="onlyFlag" type="checkbox"><i></i><span>Flagged only</span></label>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="more"><button class="btn ghost" id="more">Show more</button><span class="hint" id="count"></span></div>
+  </section>
+
+  <section class="view" id="v-map">
+    <div class="glass mapcard">
+      <div class="mapbar">
+        <div><h2>Where the signal is</h2><p>Each dot is a scored event. Size and colour follow the score.</p></div>
+        <div class="zoom"><button class="btn icon" id="zin" aria-label="Zoom in">+</button><button class="btn icon" id="zout" aria-label="Zoom out">−</button><button class="btn ghost sm" id="zreset">Reset</button></div>
+      </div>
+      <div class="mapwrap"><svg id="map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet"></svg><div class="tip" id="tip"></div></div>
+      <div class="legend"><span><i style="--c:#a5b4fc"></i>low</span><span class="ramp"></span><span><i style="--c:#7c3aed"></i>high</span><span class="hint">Scroll to zoom, drag to pan</span></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-trends">
+    <div class="grid2">
+      <div class="glass card wide"><h2>Flagged events per hour</h2><p>Bars: events the model expects to spread. Line: average score of all events that hour.</p><div id="cHourly" class="chart"></div></div>
+      <div class="glass card"><h2>Flagged by country</h2><p>Top places in the current window.</p><div id="cCountry"></div></div>
+      <div class="glass card"><h2>Flagged by event type</h2><p>CAMEO root category.</p><div id="cType"></div></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-model">
+    <div class="grid2">
+      <div class="glass card wide">
+        <h2>The model beats "just count publishers"</h2>
+        <p>Held-out weekend (24–25 Oct). PR-AUC with 95% bootstrap interval. Higher is better.</p>
+        <div id="cModels"></div>
+      </div>
+      <div class="glass card"><h2>What it looks at</h2><p>Gradient-boosted trees, 27 features from the first 60 minutes.</p><div id="cImp"></div></div>
+      <div class="glass card"><h2>The honest weak spot</h2><p>Share of all important events by how many publishers had them at hour one.</p><div id="cBuckets"></div></div>
+      <div class="glass card stats3" id="proof"></div>
+      <div class="glass card flow">
+        <h2>How a score is made</h2>
+        <ol>
+          <li><b>1 · Ingest</b><span>GDELT events, mentions and GKG every 15 minutes</span></li>
+          <li><b>2 · Wait one hour</b><span>Only data a real system would have at that time</span></li>
+          <li><b>3 · Features</b><span>Publishers, mentions, languages, tone, place, publisher reach</span></li>
+          <li><b>4 · GBT</b><span>40 trees return P(at least 3 new publishers in 48 h)</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-try">
+    <div class="grid2 try">
+      <div class="glass card">
+        <h2>Describe an event</h2>
+        <p>These are the inputs a newsroom would see in the first hour. Everything is scored locally by the real trained model.</p>
+        <div class="presets" id="presets"></div>
+        <div class="form">
+          <label class="f"><span>Publishers in hour 1 <b id="o_src">3</b></span><input id="i_src" type="range" min="1" max="40" step="1" value="3"></label>
+          <label class="f"><span>Mentions in hour 1 <b id="o_m">6</b></span><input id="i_m" type="range" min="1" max="120" step="1" value="6"></label>
+          <label class="f"><span>Languages <b id="o_lang">1</b></span><input id="i_lang" type="range" min="1" max="8" step="1" value="1"></label>
+          <label class="f"><span>Average tone <b id="o_tone">-2.0</b></span><input id="i_tone" type="range" min="-10" max="10" step="0.5" value="-2"></label>
+          <label class="f"><span>Goldstein scale <b id="o_gold">-3.0</b></span><input id="i_gold" type="range" min="-10" max="10" step="0.5" value="-3"></label>
+          <label class="f"><span>Reach of first publishers <b id="o_prior">0.10</b></span><input id="i_prior" type="range" min="0" max="0.6" step="0.01" value="0.10"></label>
+          <label class="f sel"><span>Event type</span><select id="i_type"></select></label>
+          <label class="f sel"><span>Country</span><select id="i_country"></select></label>
+        </div>
+      </div>
+      <div class="glass card result">
+        <div class="gauge" id="gauge"><div class="gin"><b id="gScore">0.00</b><span id="gVerdict">—</span></div></div>
+        <div class="thr">Decision threshold <b id="thrV"></b> · tuned for best F1 on validation</div>
+        <h3>Score as publishers grow</h3>
+        <div id="cSweep" class="chart sm"></div>
+        <p class="hint">Other inputs held fixed. Publisher count is the model's strongest signal, but trees can wobble for combinations that are rare in the training data.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<aside class="drawer glass" id="drawer" aria-hidden="true">
+  <button class="btn icon close" id="dClose" aria-label="Close">×</button>
+  <div id="dBody"></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<footer><span>SignalRank · DATA 226 · Team 10 · Real GDELT data, Spark MLlib GBT champion (<span id="fChamp"></span>) exported to JSON and scored in your browser.</span><span>"Matters" means spreads to ≥3 new publishers within 48 h, not societal importance.</span></footer>
+
+<script src="js/gbt.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

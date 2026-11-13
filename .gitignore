@@ -1,0 +1,13 @@
+data/
+models/
+mlflow.db
+mlruns/
+__pycache__/
+*.pyc
+.venv/
+spark-warehouse/
+metastore_db/
+derby.log
+reports/pdf/node_modules/
+reports/deck/*.png
+reports/deck/*.jpg

@@ -1,0 +1,15 @@
+pyspark==4.2.0
+mlflow==3.17.2
+fastapi==0.143.2
+uvicorn==0.54.0
+streamlit==1.66.0
+plotly==7.1.0
+pandas
+pyarrow
+numpy
+scikit-learn
+requests
+kafka-python==3.0.13
+matplotlib
+pytest
+httpx

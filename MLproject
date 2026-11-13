@@ -1,0 +1,14 @@
+name: signalrank
+python_env: python_env.yaml
+entry_points:
+  download:
+    parameters: {start: {type: string, default: "2026-10-20"}, days: {type: int, default: 8}}
+    command: "python ingest/download_gdelt.py --start {start} --days {days} --out data/raw"
+  lake:
+    command: "python spark_jobs/01_ingest.py --days 20261020 20261021 20261022 20261023 20261024 20261025 20261026 20261027"
+  features:
+    command: "python spark_jobs/02_build_features.py && python spark_jobs/02b_publisher_prior.py"
+  train:
+    command: "python spark_jobs/03_train.py"
+  main:
+    command: "make all"
